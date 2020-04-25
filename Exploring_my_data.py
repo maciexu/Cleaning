@@ -59,7 +59,112 @@ print(df_subset.info())
 df.describe()
 
 
+"""
+Frequency counts for categorical data
 
+As you've seen, .describe() can only be used on numeric columns. 
+So how can you diagnose data issues when you have categorical data? 
+One way is by using the .value_counts() method, which returns the frequency counts for each unique value in a column!
+
+This method also has an optional parameter called dropna which is True by default. 
+What this means is if you have missing data in a column, it will not give a frequency count of them. 
+You want to set the dropna column to False so if there are missing values in a column, it will give you the frequency counts.
+
+In this exercise, you're going to look at the 'Borough', 'State', 
+and 'Site Fill' columns to make sure all the values in there are valid. 
+When looking at the output, do a sanity check: Are all values in the 'State' column from NY, for example? 
+Since the dataset consists of applications filed in NY, you would expect this to be the case.
+"""
+# Print the value counts for 'Borough'
+print(df['Borough'].value_counts(dropna=False))
+
+# Print the value_counts for 'State'
+print(df['State'].value_counts(dropna=False))
+
+# Print the value counts for 'Site Fill'
+print(df['Site Fill'].value_counts(dropna=False))
+
+
+
+"""
+Visualizing single variables with histograms
+
+Up until now, you've been looking at descriptive statistics of your data. 
+One of the best ways to confirm what the numbers are telling you is to plot and visualize the data.
+
+You'll start by visualizing single variables using a histogram for numeric values. 
+The column you will work on in this exercise is 'Existing Zoning Sqft'.
+
+The .plot() method allows you to create a plot of each column of a DataFrame. 
+The kind parameter allows you to specify the type of plot to use - kind='hist', for example, plots a histogram.
+
+In the IPython Shell, begin by computing summary statistics for the 'Existing Zoning Sqft' column using the .describe() method. 
+You'll notice that there are extremely large differences between the min and max values, and the plot will need to be adjusted accordingly. 
+In such cases, it's good to look at the plot on a log scale. 
+The keyword arguments logx=True or logy=True can be passed in to .plot() depending on which axis you want to rescale.
+"""
+
+# Import matplotlib.pyplot
+import matplotlib.pyplot as plt
+
+# Describe the column
+print(df['Existing Zoning Sqft'].describe())
+
+# Plot the histogram
+df['Existing Zoning Sqft'].plot(kind='hist', rot=70, logx=True, logy=True)
+
+# Display the histogram
+plt.show()
+
+
+"""
+Visualizing multiple variables with boxplots
+
+Histograms are great ways of visualizing single variables. 
+To visualize multiple variables, boxplots are useful, especially when one of the variables is categorical.
+
+In this exercise, your job is to use a boxplot to compare the 'initial_cost' across the different values of the 'Borough' column. 
+The pandas .boxplot() method is a quick way to do this, in which you have to specify the column and by parameters. 
+Here, you want to visualize how 'initial_cost' varies by 'Borough'.
+
+pandas and matplotlib.pyplot have been imported for you as pd and plt, respectively, and the DataFrame has been pre-loaded as df.
+"""
+# Import necessary modules
+import pandas as pd
+import matplotlib.pyplot as plt
+
+# Create the boxplot
+df.boxplot(column='initial_cost', by='Borough', rot=90)
+
+# Display the plot
+plt.show()
+
+
+""""
+Visualizing multiple variables with scatter plots
+
+Boxplots are great when you have a numeric column that you want to compare across different categories. 
+When you want to visualize two numeric columns, scatter plots are ideal.
+
+In this exercise, your job is to make a scatter plot with 'initial_cost' on the x-axis and the 'total_est_fee' on the y-axis. 
+You can do this by using the DataFrame .plot() method with kind='scatter'. 
+You'll notice right away that there are 2 major outliers shown in the plots.
+
+Since these outliers dominate the plot, an additional DataFrame, df_subset, has been provided, 
+in which some of the extreme values have been removed. 
+After making a scatter plot using this, you'll find some interesting patterns here that would not have been seen by looking at summary statistics or 1 variable plots.
+"""
+# Import necessary modules
+import pandas as pd
+import matplotlib.pyplot as plt
+
+# Create and display the first scatter plot
+df.plot(kind='scatter', x='initial_cost', y='total_est_fee', rot=70)
+plt.show()
+
+# Create and display the second scatter plot
+df_subset.plot(kind='scatter', x='initial_cost', y='total_est_fee', rot=70)
+plt.show()
 
 
 
