@@ -181,8 +181,105 @@ invalid_countries = countries.loc[mask_inverse]
 print(invalid_countries)
 
 
+"""
+More data cleaning and processing
 
+It's now time to deal with the missing data. There are several strategies for this: 
+You can drop them, fill them in using the mean of the column or row that the missing value is in (also known as imputation),
 
+https://en.wikipedia.org/wiki/Imputation_(statistics)
 
+or, if you are dealing with time series data, use a forward fill or backward fill, 
+in which you replace missing values in a column with the most recent known value in the column. 
+See pandas Foundations for more on forward fill and backward fill.
+https://learn.datacamp.com/courses/pandas-foundations
+
+In general, it is not the best idea to drop missing values, 
+because in doing so you may end up throwing away useful information. 
+In this data, the missing values refer to years where no estimate for life expectancy is available for a given country. 
+You could fill in, or guess what these life expectancies could be by looking at the average life expectancies for other countries in that year, 
+for example. Whichever strategy you go with, it is important to carefully consider all options and understand how they will affect your data.
+
+In this exercise, you'll practice dropping missing values. 
+Your job is to drop all the rows that have NaN in the life_expectancy column. 
+Before doing so, it would be valuable to use assert statements to confirm that year and country do not have any missing values.
+"""
+
+# Assert that country does not contain any missing values
+assert pd.notnull(gapminder.country).all()
+
+# Assert that year does not contain any missing values
+assert pd.notnull(gapminder.year).all()
+
+# Drop the missing values
+"""
+Drop the rows in the data where any observation in life_expectancy is missing. 
+As you confirmed that country and year don't have missing values, 
+you can use the .dropna() method on the entire gapminder DataFrame, 
+because any missing values would have to be in the life_expectancy column. 
+The .dropna() method has the default keyword arguments axis=0 and how='any', 
+which specify that rows with any missing values should be dropped.
+"""
+gapminder = gapminder.dropna()
+
+# Print the shape of gapminder
+print(gapminder.shape)
+
+"""
+After dropping the missing values from 'life_expectancy', the number of rows in the DataFrame has gone down from 169260 to 43857. 
+In general, you should avoid dropping too much of your data, but if there is no reasonable way to fill in or impute missing values, 
+then dropping the missing data may be the best solution.
+"""
+
+"""
+Wrapping up
+
+Now that you have a clean and tidy dataset, you can do a bit of visualization and aggregation. 
+In this exercise, you'll begin by creating a histogram of the life_expectancy column. 
+You should not get any values under 0 and you should see something reasonable on the higher end of the life_expectancy age range.
+
+Your next task is to investigate how average life expectancy changed over the years. 
+To do this, you need to subset the data by each year, get the life_expectancy column from each subset, 
+and take an average of the values. You can achieve this using the .groupby() method. 
+This .groupby() method is covered in greater depth in Manipulating DataFrames with pandas.
+
+https://learn.datacamp.com/courses/manipulating-dataframes-with-pandas
+
+Finally, you can save your tidy and summarized DataFrame to a file using the .to_csv() method.
+"""
+
+# Add first subplot
+plt.subplot(2, 1, 1) 
+
+# Create a histogram of life_expectancy
+gapminder.life_expectancy.plot(kind='hist')
+
+# Group gapminder: gapminder_agg
+gapminder_agg = gapminder.groupby('year')['life_expectancy'].mean()
+
+# Print the head of gapminder_agg
+print(gapminder_agg.head())
+
+# Print the tail of gapminder_agg
+print(gapminder_agg.tail())
+
+# Add second subplot
+plt.subplot(2, 1, 2)
+
+# Create a line plot of life expectancy per year
+gapminder_agg.plot()
+
+# Add title and specify axis labels
+plt.title('Life expectancy over the years')
+plt.ylabel('Life expectancy')
+plt.xlabel('Year')
+
+# Display the plots
+plt.tight_layout()
+plt.show()
+
+# Save both DataFrames to csv files
+gapminder.to_csv('gapminder.csv')
+gapminder_agg.to_csv('gapminder_agg.csv')
 
 
