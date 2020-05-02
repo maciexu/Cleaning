@@ -1,3 +1,11 @@
+# How to find dup?
+dup = df.duplicated()          
+
+# subset = lis of clomuns to check for dup
+# keep('first'), keep('last'), all-> keep = False
+dup = df.duplicated(subset = ['tax_id', 'address', 'email'], keep = False)
+df[dup].sort_values(by = 'tax_id')
+
 # Drop duplicate
 # Create the new DataFrame: tracks
 tracks = billboard[['year', 'artist', 'track', 'time']]
@@ -6,7 +14,41 @@ tracks = billboard[['year', 'artist', 'track', 'time']]
 print(tracks.info())
 
 # Drop the duplicates: tracks_no_duplicates
+# df.drop_duplicates(inplace = True)
 tracks_no_duplicates = tracks.drop_duplicates()
+
+# How to treat dup obseration but with some different values? ->.groupby() or .agg()
+summary = {'height': 'max', 'weight': 'mean'}
+h_w = h_w.groupby(by=column_name).agg(summary).reset_index()
+
+""" EXample codes of finding dups and drop them"""
+# Find duplicates
+duplicates = ride_sharing.duplicated(subset = ['ride_id'], keep = False )
+
+# Sort your duplicated rides
+duplicated_rides = ride_sharing[duplicates].sort_values(by = 'ride_id')
+
+# Print relevant columns of duplicated_rides
+print(duplicated_rides[['ride_id','duration','user_birth_year']])
+# Drop commplete duplicates from ride_sharing
+# Drop complete duplicates in ride_sharing and store the results in ride_dup.
+ride_dup = ride_sharing.drop_duplicates()
+
+# Create statistics dictionary for aggregation function
+statistics = {'user_birth_year': 'max', 'duration': 'mean'}
+
+# Group by ride_id and compute new statistics
+ride_unique = ride_dup.groupby('ride_id').agg(statistics).reset_index()
+
+# Find duplicated values again
+duplicates = ride_unique.duplicated(subset = 'ride_id', keep = False)
+duplicated_rides = ride_unique[duplicates == True]
+
+# Assert duplicates are processed
+assert duplicated_rides.shape[0] == 0
+
+
+
 
 # Fill in missing values
 # Print info of tracks
@@ -44,8 +86,6 @@ assert ebola.notnull().all().all()
 
 # Assert that all values are >= 0
 assert (ebola >= 0).all().all()
-
-
 
 
 
