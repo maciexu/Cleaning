@@ -42,22 +42,57 @@ print(ride_sharing['duration_time'].mean())
 # Q: Can future registrations exist???
 # Q: Can the rating above the max value???
 # Example: the max value of the movie rating is 5, but there are some of 6. First to out put the movies with ratings > 6
-movies[movies['rating'] > 5]
+movies[movies['ratings'] > 5]
 
-# drop and replace
-movies.drop(movies[movies['rating'] > 5].index, inplace = True)
+# Solutions:
+#1 drop and replace
+movies.drop(movies[movies['ratings'] > 5].index, inplace = True)
 
-# drop by filtering
+#2 drop by filtering
 movies = movies[movies['ratings'] <= 5]
+
+#3 convert these values to max value
+movies.loc[movies['ratings']>5, 'ratings'] = 5
 
 # verify the result
 assert movies['ratings'].max() <=5
 
+""" Convert to datetime"""
+user['login'] = pd.to_datetime(user['login'])
+assert users['login'].dtype == 'datetime64[ns]'
+
+# Convert tire_sizes to integer
+ride_sharing['tire_sizes'] = ride_sharing['tire_sizes'].astype('int')
+
+# Set all values above 27 to 27
+ride_sharing.loc[ride_sharing['tire_sizes'] > 27, 'tire_sizes'] = 27
+
+# Assert that maximum value of tire_sizes is 27
+assert ride_sharing['tire_sizes'].max() == 27
+
+# Reconvert tire_sizes back to categorical
+ride_sharing['tire_sizes'] = ride_sharing['tire_sizes'].astype('category')
+
+# Print tire size description
+print(ride_sharing['tire_sizes'].describe())
+
+"""
+Back to the future
+A bug was discovered which was relaying rides taken today as taken next year.
+"""
+# Convert ride_date to datetime
+ride_sharing['ride_dt'] = pd.to_datetime(ride_sharing['ride_date'])
+
+# Save today's date
+today = dt.date.today()
+
+# Set all in the future to today's date
+ride_sharing.loc[ride_sharing['ride_dt'] > today,'ride_dt'] = today
+
+# Assert change has been done
+assert ride_sharing['ride_dt'].max().date() == today
 
 
 
 
-
-
- 
 
